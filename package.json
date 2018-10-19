@@ -4,6 +4,8 @@
   "description": "Clone this repo to get a bunch of helpful settings for creating an npm library with typescript or javascript",
   "main": "src/index.js",
   "scripts": {
+    "clean": "rimraf dist test",
+    "build": "run-s clean && tsc -p tsconfig.json",
     "test": "jest"
   },
   "repository": {
@@ -23,6 +25,13 @@
     "eslint-config-prettier": "^3.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
-    "eslint-plugin-react": "^7.11.1"
+    "eslint-plugin-react": "^7.11.1",
+    "npm-run-all": "^4.1.3",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.15.0",
+    "typescript": "^3.1.3"
+  },
+  "dependencies": {
+    "rimraf": "^2.6.2"
   }
 }
