@@ -6,7 +6,10 @@
   "scripts": {
     "clean": "rimraf dist test",
     "build": "run-s clean && tsc -p tsconfig.json",
-    "test": "jest"
+    "lint": "run-s -c lint:*",
+    "lint:js": "eslint src",
+    "lint:ts": "tslint --project .",
+    "test": "jest --maxWorkers ${JEST_MAX_WORKERS:-0}"
   },
   "repository": {
     "type": "git",
