@@ -1,0 +1,13 @@
+coverage
+src
+test
+.eslintrc
+.prettierignore
+jest.config.js
+tsconfig.json
+tslint.json
+yarn.lock
+.vscode
+.prettierignore
+**/*.test.*
+*.log
