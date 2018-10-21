@@ -2,9 +2,9 @@
   "name": "lib-template",
   "version": "0.0.0",
   "description": "Clone this repo to get a bunch of helpful settings for creating an npm library with typescript or javascript",
-  "main": "src/index.js",
+  "main": "dist/lib/index.js",
   "scripts": {
-    "clean": "rimraf dist test",
+    "clean": "rimraf dist",
     "build": "run-s clean && tsc -p tsconfig.json",
     "lint": "run-s -c lint:*",
     "lint:js": "eslint src",
