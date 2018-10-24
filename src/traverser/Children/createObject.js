@@ -1,4 +1,4 @@
-import { detach, types } from 'mobx-state-tree';
+import { detach, getPropertyMembers, types } from 'mobx-state-tree';
 
 export default Type =>
   types
@@ -66,7 +66,9 @@ export default Type =>
     })
     .actions(self => ({
       set(key, value) {
-        self.collection[key] = value;
+        if (key in getPropertyMembers(Type).properties) {
+          self.collection[key] = value;
+        }
       },
       remove(key) {
         const child = self.get(key);

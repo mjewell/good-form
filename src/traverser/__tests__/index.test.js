@@ -17,11 +17,11 @@ it('recurses through deep objects', () => {
       ]
     });
 
-  expect(obj.value).toEqual({
+  expect(obj.value).toStrictEqual({
     arr: [{ a: 1 }]
   });
-  expect(obj.getChild('arr').value).toEqual([{ a: 1 }]);
-  expect(obj.getChild('arr[0]').value).toEqual({ a: 1 });
+  expect(obj.getChild('arr').value).toStrictEqual([{ a: 1 }]);
+  expect(obj.getChild('arr[0]').value).toStrictEqual({ a: 1 });
   expect(obj.getChild('arr[0].a').value).toBe(1);
 });
 

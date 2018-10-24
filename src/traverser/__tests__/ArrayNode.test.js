@@ -65,42 +65,42 @@ describe('setValue', () => {
     const arrayNode = StringArrayNode.create(['a', 'b', 'd']);
 
     arrayNode.setValue(['a', 'b', 'c', 'd']);
-    expect(arrayNode.value).toEqual(['a', 'b', 'c', 'd']);
+    expect(arrayNode.value).toStrictEqual(['a', 'b', 'c', 'd']);
   });
 
   it('removes nodes when the value contains fewer elements', () => {
     const arrayNode = StringArrayNode.create(['a', 'b', 'c', 'd']);
 
     arrayNode.setValue(['a', 'b', 'd']);
-    expect(arrayNode.value).toEqual(['a', 'b', 'd']);
+    expect(arrayNode.value).toStrictEqual(['a', 'b', 'd']);
   });
 
   it('updates nodes when the value contains different elements', () => {
     const arrayNode = StringArrayNode.create(['a', 'b']);
 
     arrayNode.setValue(['x', 'y']);
-    expect(arrayNode.value).toEqual(['x', 'y']);
+    expect(arrayNode.value).toStrictEqual(['x', 'y']);
   });
 
   it('updates nodes when the value contains nodes', () => {
     const arrayNode = StringArrayNode.create(['a', 'b']);
 
     arrayNode.setValue([arrayNode.getChild(0), 'b', StringNode.create('c')]);
-    expect(arrayNode.value).toEqual(['a', 'b', 'c']);
+    expect(arrayNode.value).toStrictEqual(['a', 'b', 'c']);
   });
 
   it('updates nodes when a node is moved', () => {
     const arrayNode = StringArrayNode.create(['a', 'b', 'c']);
 
     arrayNode.setValue([arrayNode.getChild(0), arrayNode.getChild(2)]);
-    expect(arrayNode.value).toEqual(['a', 'c']);
+    expect(arrayNode.value).toStrictEqual(['a', 'c']);
   });
 
   it('updates nodes when a node is moved and replaced', () => {
     const arrayNode = StringArrayNode.create(['a', 'b', 'c']);
 
     arrayNode.setValue([arrayNode.getChild(1), arrayNode.getChild(2)]);
-    expect(arrayNode.value).toEqual(['b', 'c']);
+    expect(arrayNode.value).toStrictEqual(['b', 'c']);
   });
 
   it('errors when the value is not an array', () => {

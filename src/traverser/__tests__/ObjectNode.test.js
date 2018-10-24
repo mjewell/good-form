@@ -72,11 +72,8 @@ describe('creation', () => {
     it('errors if the value has missing properties', () => {
       const expected = expect(() =>
         ObjectNode.create({
-          a: 1
+          a: 'a'
         })
-      );
-      expected.toThrowError(
-        'at path "/children/collection/a/value" value `1` is not assignable to type: `string`'
       );
       expected.toThrowError(
         'at path "/children/collection/b/value" value `undefined` is not assignable to type: `number`'
@@ -122,10 +119,10 @@ describe('creation', () => {
         })
       );
       expected.toThrowError(
-        'at path "/children/collection/a" value `1` is not assignable to type: `(LeafNode | undefined)`'
+        'at path "/children/collection/a/value" value `1` is not assignable to type: `string`'
       );
       expected.toThrowError(
-        'at path "/children/collection/b" value `"b"` is not assignable to type: `(LeafNode | undefined)`'
+        'at path "/children/collection/b/value" value `"b"` is not assignable to type: `number`'
       );
     });
 
@@ -244,7 +241,8 @@ describe('setValue', () => {
       b: 'b',
       c: 'c'
     });
-    expect(objectNode.value).toEqual({
+
+    expect(objectNode.value).toStrictEqual({
       a: 'a',
       b: 'b'
     });
@@ -275,7 +273,7 @@ describe('setValue', () => {
       a: 'x',
       b: 'y'
     });
-    expect(objectNode.value).toEqual({
+    expect(objectNode.value).toStrictEqual({
       a: 'x',
       b: 'y'
     });
@@ -291,7 +289,7 @@ describe('setValue', () => {
       a: objectNode.getChild('a'),
       b: StringNode.create('y')
     });
-    expect(objectNode.value).toEqual({
+    expect(objectNode.value).toStrictEqual({
       a: 'a',
       b: 'y'
     });
@@ -311,7 +309,7 @@ describe('setValue', () => {
     objectNode.setValue({
       a: objectNode.getChild('b')
     });
-    expect(objectNode.value).toEqual({
+    expect(objectNode.value).toStrictEqual({
       a: 'b'
     });
   });
@@ -331,7 +329,7 @@ describe('setValue', () => {
       a: objectNode.getChild('b'),
       b: objectNode.getChild('a')
     });
-    expect(objectNode.value).toEqual({
+    expect(objectNode.value).toStrictEqual({
       a: 'b',
       b: 'a'
     });

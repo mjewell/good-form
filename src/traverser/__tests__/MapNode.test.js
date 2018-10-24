@@ -98,7 +98,7 @@ describe('setValue', () => {
       b: 'b',
       c: 'c'
     });
-    expect(mapNode.value).toEqual({
+    expect(mapNode.value).toStrictEqual({
       a: 'a',
       b: 'b',
       c: 'c'
@@ -114,7 +114,7 @@ describe('setValue', () => {
     mapNode.setValue({
       a: 'a'
     });
-    expect(mapNode.value).toEqual({
+    expect(mapNode.value).toStrictEqual({
       a: 'a'
     });
   });
@@ -129,7 +129,7 @@ describe('setValue', () => {
       a: 'x',
       b: 'y'
     });
-    expect(mapNode.value).toEqual({
+    expect(mapNode.value).toStrictEqual({
       a: 'x',
       b: 'y'
     });
@@ -145,7 +145,7 @@ describe('setValue', () => {
       a: mapNode.getChild('a'),
       b: StringNode.create('y')
     });
-    expect(mapNode.value).toEqual({
+    expect(mapNode.value).toStrictEqual({
       a: 'a',
       b: 'y'
     });
@@ -160,7 +160,7 @@ describe('setValue', () => {
     mapNode.setValue({
       a: mapNode.getChild('b')
     });
-    expect(mapNode.value).toEqual({
+    expect(mapNode.value).toStrictEqual({
       a: 'b'
     });
   });
@@ -175,7 +175,7 @@ describe('setValue', () => {
       a: mapNode.getChild('b'),
       b: mapNode.getChild('a')
     });
-    expect(mapNode.value).toEqual({
+    expect(mapNode.value).toStrictEqual({
       a: 'b',
       b: 'a'
     });

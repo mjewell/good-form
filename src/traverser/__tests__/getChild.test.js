@@ -38,19 +38,19 @@ describe('getChild', () => {
     it('returns the node at the path when it is only one level deep', () => {
       const node = NestedNode.create(value);
 
-      expect(node.getChild('obj').value).toEqual(value.obj);
+      expect(node.getChild('obj').value).toStrictEqual(value.obj);
     });
 
     it('returns the node at the path when it is multiple levels deep', () => {
       const node = NestedNode.create(value);
 
-      expect(node.getChild('obj.arr').value).toEqual(value.obj.arr);
+      expect(node.getChild('obj.arr').value).toStrictEqual(value.obj.arr);
     });
 
     it('returns the node at the path when it includes array indices', () => {
       const node = NestedNode.create(value);
 
-      expect(node.getChild('obj.arr[0]').value).toEqual(value.obj.arr[0]);
+      expect(node.getChild('obj.arr[0]').value).toStrictEqual(value.obj.arr[0]);
     });
 
     it('cannot access nodes whose paths have dots in them', () => {
@@ -83,27 +83,29 @@ describe('getChild', () => {
     it('returns the node at the path when it is only one level deep', () => {
       const node = NestedNode.create(value);
 
-      expect(node.getChild(['obj']).value).toEqual(value.obj);
+      expect(node.getChild(['obj']).value).toStrictEqual(value.obj);
     });
 
     it('returns the node at the path when it is multiple levels deep', () => {
       const node = NestedNode.create(value);
 
-      expect(node.getChild(['obj', 'arr']).value).toEqual(value.obj.arr);
+      expect(node.getChild(['obj', 'arr']).value).toStrictEqual(value.obj.arr);
     });
 
     it('returns the node at the path when it includes array indices', () => {
       const node = NestedNode.create(value);
 
-      expect(node.getChild(['obj', 'arr', 0]).value).toEqual(value.obj.arr[0]);
+      expect(node.getChild(['obj', 'arr', 0]).value).toStrictEqual(
+        value.obj.arr[0]
+      );
     });
 
     it('accesses nodes whose paths have dots or brackets in them', () => {
       const node = NestedNode.create(value);
 
-      expect(node.getChild(['dotted.path', 'square[brackets]']).value).toEqual(
-        value['dotted.path']['square[brackets]']
-      );
+      expect(
+        node.getChild(['dotted.path', 'square[brackets]']).value
+      ).toStrictEqual(value['dotted.path']['square[brackets]']);
     });
 
     it('errors when the path does not exist', () => {
