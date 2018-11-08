@@ -6,9 +6,6 @@ export default Type =>
       collection: Type
     })
     .views(self => ({
-      replace(collection) {
-        this.collection.replace(collection);
-      },
       forEach(callback) {
         return self.collection.forEach(callback);
       },
@@ -41,5 +38,9 @@ export default Type =>
       remove(index) {
         detach(self.get(index));
         return self.collection.splice(index, 1);
+      },
+      replace(collection) {
+        // self.collection.forEach(detach);
+        self.collection.replace(collection);
       }
     }));
