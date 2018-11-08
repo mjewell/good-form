@@ -1,9 +1,11 @@
-import { getParent } from 'mobx-state-tree';
+import { getParent, types } from 'mobx-state-tree';
+import uniqid from 'uniqid';
 
 export default node =>
   node
     .props({
-      isTraverserNode: true
+      isTraverserNode: true,
+      id: types.optional(types.string, () => uniqid())
     })
     .views(self => ({
       get parent() {

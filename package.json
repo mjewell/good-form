@@ -43,7 +43,8 @@
   },
   "dependencies": {
     "invariant": "^2.2.4",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "uniqid": "^5.0.3"
   },
   "peerDependencies": {
     "mobx": ">4.0.0",

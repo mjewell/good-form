@@ -32,7 +32,10 @@ export default node =>
       pathTo(childNode) {
         const path = self.pathLookup[childNode.id];
 
-        invariant(path, 'Child node must exist in parent');
+        invariant(
+          typeof path !== 'undefined',
+          'Child node must exist in parent'
+        );
 
         return path;
       }
