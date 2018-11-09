@@ -40,7 +40,7 @@ export default Type =>
         return self.collection.splice(index, 1);
       },
       replace(collection) {
-        // self.collection.forEach(detach);
+        self.collection.forEach(detach);
         self.collection.replace(collection);
       }
     }));
