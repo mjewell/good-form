@@ -1,10 +1,10 @@
-import { types } from 'mobx-state-tree';
+import t from 'tcomb';
 import traverser from '..';
 
-const StringNode = traverser.createLeafNode(types.string);
-const MaybeStringNode = traverser.createLeafNode(types.maybe(types.string));
-const NumberNode = traverser.createLeafNode(types.number);
-const MaybeNumberNode = traverser.createLeafNode(types.maybe(types.number));
+const StringNode = traverser.createLeafNode(t.String);
+const MaybeStringNode = traverser.createLeafNode(t.maybe(t.String));
+const NumberNode = traverser.createLeafNode(t.Number);
+const MaybeNumberNode = traverser.createLeafNode(t.maybe(t.Number));
 
 describe('creation', () => {
   describe('required nodes and values', () => {
@@ -14,7 +14,7 @@ describe('creation', () => {
     });
 
     it('can be created from an object', () => {
-      const objectNode = ObjectNode.create({
+      const objectNode = new ObjectNode({
         a: 'a',
         b: 1
       });
@@ -26,38 +26,29 @@ describe('creation', () => {
     });
 
     it('errors if the value is undefined', () => {
-      const expected = expect(() => ObjectNode.create());
-      expected.toThrowError(
-        'at path "/children/collection/a/value" value `undefined` is not assignable to type: `string`'
-      );
-      expected.toThrowError(
-        'at path "/children/collection/b/value" value `undefined` is not assignable to type: `number`'
-      );
+      const expected = expect(() => new ObjectNode());
+      expected.toThrowError('Invalid value undefined supplied to LeafNode');
     });
 
     it('errors if the value isnt an object', () => {
-      expect(() => ObjectNode.create(1)).toThrowError(
-        'at path "/children/collection" value `1` is not assignable to type: `AnonymousModel`'
+      expect(() => new ObjectNode(1)).toThrowError(
+        'ObjectNode value must be a plain object'
       );
     });
 
     it('errors if the value has the wrong types', () => {
-      const expected = expect(() =>
-        ObjectNode.create({
-          a: 1,
-          b: 'b'
-        })
+      const expected = expect(
+        () =>
+          new ObjectNode({
+            a: 1,
+            b: 'b'
+          })
       );
-      expected.toThrowError(
-        'at path "/children/collection/a/value" value `1` is not assignable to type: `string`'
-      );
-      expected.toThrowError(
-        'at path "/children/collection/b/value" value `"b"` is not assignable to type: `number`'
-      );
+      expected.toThrowError('Invalid value 1 supplied to String');
     });
 
     it('ignores them if the value has additional properties', () => {
-      const objectNode = ObjectNode.create({
+      const objectNode = new ObjectNode({
         a: 'a',
         b: 1,
         c: 'c'
@@ -70,25 +61,24 @@ describe('creation', () => {
     });
 
     it('errors if the value has missing properties', () => {
-      const expected = expect(() =>
-        ObjectNode.create({
-          a: 'a'
-        })
+      const expected = expect(
+        () =>
+          new ObjectNode({
+            a: 'a'
+          })
       );
-      expected.toThrowError(
-        'at path "/children/collection/b/value" value `undefined` is not assignable to type: `number`'
-      );
+      expected.toThrowError('Invalid value undefined supplied to LeafNode');
     });
   });
 
   describe('optional nodes', () => {
     const ObjectNode = traverser.createObjectNode({
-      a: types.maybe(StringNode),
-      b: types.maybe(NumberNode)
+      a: t.maybe(StringNode),
+      b: t.maybe(NumberNode)
     });
 
     it('can be created from an object', () => {
-      const objectNode = ObjectNode.create({
+      const objectNode = new ObjectNode({
         a: 'a',
         b: 1
       });
@@ -100,34 +90,30 @@ describe('creation', () => {
     });
 
     it('can be created from undefined', () => {
-      const objectNode = ObjectNode.create();
+      const objectNode = new ObjectNode();
 
       expect(objectNode.value).toStrictEqual({});
     });
 
     it('errors if the value isnt an object', () => {
-      expect(() => ObjectNode.create(1)).toThrowError(
-        'at path "/children/collection" value `1` is not assignable to type: `AnonymousModel`'
+      expect(() => new ObjectNode(1)).toThrowError(
+        'ObjectNode value must be a plain object'
       );
     });
 
     it('errors if the value has the wrong types', () => {
-      const expected = expect(() =>
-        ObjectNode.create({
-          a: 1,
-          b: 'b'
-        })
+      const expected = expect(
+        () =>
+          new ObjectNode({
+            a: 1,
+            b: 'b'
+          })
       );
-      expected.toThrowError(
-        'at path "/children/collection/a/value" value `1` is not assignable to type: `string`'
-      );
-      expected.toThrowError(
-        'at path "/children/collection/b/value" value `"b"` is not assignable to type: `number`'
-      );
+      expected.toThrowError('Invalid value 1 supplied to String');
     });
 
     it('ignores them if the value has additional properties', () => {
-      const objectNode = ObjectNode.create({
+      const objectNode = new ObjectNode({
         a: 'a',
         b: 1,
         c: 'c'
@@ -140,7 +126,7 @@ describe('creation', () => {
     });
 
     it('can be created from an object with missing properties', () => {
-      const objectNode = ObjectNode.create({
+      const objectNode = new ObjectNode({
         b: 1
       });
 
@@ -150,14 +136,14 @@ describe('creation', () => {
     });
   });
 
-  describe('optional values', () => {
+  describe.only('optional values', () => {
     const ObjectNode = traverser.createObjectNode({
       a: MaybeStringNode,
       b: MaybeNumberNode
     });
 
     it('can be created from an object', () => {
-      const objectNode = ObjectNode.create({
+      const objectNode = new ObjectNode({
         a: 'a',
         b: 1
       });
@@ -168,38 +154,30 @@ describe('creation', () => {
       });
     });
 
-    it('can be created from undefined', () => {
-      const objectNode = ObjectNode.create();
-
-      expect(objectNode.value).toStrictEqual({
-        a: undefined,
-        b: undefined
-      });
+    it.only('can be created from undefined', () => {
+      const expected = expect(() => new ObjectNode());
+      expected.toThrowError('Invalid value undefined supplied to LeafNode');
     });
 
     it('errors if the value isnt an object', () => {
-      expect(() => ObjectNode.create(1)).toThrowError(
-        'at path "/children/collection" value `1` is not assignable to type: `AnonymousModel`'
+      expect(() => new ObjectNode(1)).toThrowError(
+        'ObjectNode value must be a plain object'
       );
     });
 
     it('errors if the value has the wrong types', () => {
-      const expected = expect(() =>
-        ObjectNode.create({
-          a: 1,
-          b: 'b'
-        })
+      const expected = expect(
+        () =>
+          new ObjectNode({
+            a: 1,
+            b: 'b'
+          })
       );
-      expected.toThrowError(
-        'at path "/children/collection/a/value" value `1` is not assignable to type: `(string | undefined)`'
-      );
-      expected.toThrowError(
-        'at path "/children/collection/b/value" value `"b"` is not assignable to type: `(number | undefined)`'
-      );
+      expected.toThrowError('Invalid value 1 supplied to String');
     });
 
     it('ignores them if the value has additional properties', () => {
-      const objectNode = ObjectNode.create({
+      const objectNode = new ObjectNode({
         a: 'a',
         b: 1,
         c: 'c'
@@ -212,7 +190,7 @@ describe('creation', () => {
     });
 
     it('can be created from an object with missing properties', () => {
-      const objectNode = ObjectNode.create({
+      const objectNode = new ObjectNode({
         b: 1
       });
 
@@ -231,7 +209,7 @@ describe('setValue', () => {
   });
 
   it('ignores nodes that are not in the original set', () => {
-    const objectNode = ObjectNode.create({
+    const objectNode = new ObjectNode({
       a: 'a',
       b: 'b'
     });
@@ -249,7 +227,7 @@ describe('setValue', () => {
   });
 
   it('errors when the value is missing required nodes', () => {
-    const objectNode = ObjectNode.create({
+    const objectNode = new ObjectNode({
       a: 'a',
       b: 'b'
     });
@@ -258,13 +236,11 @@ describe('setValue', () => {
       objectNode.setValue({
         a: 'a'
       })
-    ).toThrow(
-      'at path "/b/value" value `undefined` is not assignable to type: `string`'
-    );
+    ).toThrow('Invalid value undefined supplied to String');
   });
 
   it('updates nodes when the value contains different values', () => {
-    const objectNode = ObjectNode.create({
+    const objectNode = new ObjectNode({
       a: 'a',
       b: 'b'
     });
@@ -280,14 +256,14 @@ describe('setValue', () => {
   });
 
   it('updates nodes when the value contains nodes', () => {
-    const objectNode = ObjectNode.create({
+    const objectNode = new ObjectNode({
       a: 'a',
       b: 'b'
     });
 
     objectNode.setValue({
       a: objectNode.getChild('a'),
-      b: StringNode.create('y')
+      b: new StringNode('y')
     });
     expect(objectNode.value).toStrictEqual({
       a: 'a',
@@ -297,11 +273,11 @@ describe('setValue', () => {
 
   it('updates nodes when a node is moved', () => {
     const MaybeObjectNode = traverser.createObjectNode({
-      a: types.maybe(StringNode),
-      b: types.maybe(StringNode)
+      a: t.maybe(StringNode),
+      b: t.maybe(StringNode)
     });
 
-    const objectNode = MaybeObjectNode.create({
+    const objectNode = new MaybeObjectNode({
       a: 'a',
       b: 'b'
     });
@@ -316,11 +292,11 @@ describe('setValue', () => {
 
   it('updates nodes when a node is moved and replaced', () => {
     const MaybeObjectNode = traverser.createObjectNode({
-      a: types.maybe(StringNode),
-      b: types.maybe(StringNode)
+      a: t.maybe(StringNode),
+      b: t.maybe(StringNode)
     });
 
-    const objectNode = MaybeObjectNode.create({
+    const objectNode = new MaybeObjectNode({
       a: 'a',
       b: 'b'
     });
@@ -336,7 +312,7 @@ describe('setValue', () => {
   });
 
   it('errors when the value is not an object', () => {
-    const objectNode = ObjectNode.create({
+    const objectNode = new ObjectNode({
       a: 'a',
       b: 'b'
     });
@@ -345,7 +321,7 @@ describe('setValue', () => {
   });
 
   it('errors when the value in the object is invalid', () => {
-    const objectNode = ObjectNode.create({
+    const objectNode = new ObjectNode({
       a: 'a',
       b: 'b'
     });
@@ -355,6 +331,6 @@ describe('setValue', () => {
         a: 1,
         b: 'b'
       })
-    ).toThrow('value `1` is not assignable to type: `string`');
+    ).toThrow('Invalid value 1 supplied to String');
   });
 });

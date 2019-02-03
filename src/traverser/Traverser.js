@@ -1,11 +1,10 @@
 import { types } from 'mobx-state-tree';
 import invariant from 'invariant';
-import isPlainObject from 'lodash/isPlainObject';
 
-function createNode(name, callbacks, type, options, context) {
+function createNode(BaseClass, callbacks, ...args) {
   return callbacks.reduce(
-    (node, callback) => callback(node, type, options, context),
-    types.model(name)
+    (node, callback) => callback(node, ...args),
+    BaseClass
   );
 }
 
@@ -91,7 +90,7 @@ export default class Traverser {
 
   createLeafNode(type, options) {
     return createNode(
-      'LeafNode',
+      class LeafNode {},
       [...this.nodeCallbacks, ...this.leafNodeCallbacks],
       type,
       options,
@@ -101,13 +100,13 @@ export default class Traverser {
 
   createObjectNode(type, options) {
     return createNode(
-      'ObjectNode',
+      class ObjectNode {},
       [
         ...this.nodeCallbacks,
         ...this.parentNodeCallbacks,
         ...this.objectNodeCallbacks
       ],
-      isPlainObject(type) ? types.model(type) : types.map(type),
+      type,
       options,
       this.context
     );
@@ -115,7 +114,7 @@ export default class Traverser {
 
   createArrayNode(type, options) {
     return createNode(
-      'ArrayNode',
+      class ArrayNode {},
       [
         ...this.nodeCallbacks,
         ...this.parentNodeCallbacks,

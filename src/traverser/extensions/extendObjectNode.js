@@ -1,40 +1,69 @@
-import { isModelType, detach } from 'mobx-state-tree';
 import invariant from 'invariant';
 import isPlainObject from 'lodash/isPlainObject';
+import { action, intercept, observable } from 'mobx';
 import isNode from '../utils/isNode';
-import createChildObject from '../Children/createObject';
+import typeCheck from '../types/validate';
+import getInstantiableFromType from '../types/getInstantiableFromType';
+import ObjectCollection from '../collections/ObjectCollection';
 import createChildMap from '../Children/createMap';
 
-export default (node, type) =>
-  node
-    .props({
-      children: isModelType(type)
-        ? createChildObject(type)
-        : createChildMap(type)
-    })
-    .actions(self => ({
-      setValue(value) {
-        invariant(isPlainObject(value), 'value must be an object');
+export default (Node, type) => {
+  class ObjectNode extends Node {
+    @observable children = new ObjectCollection({});
 
-        const entriesForNodesThatStillExist = Object.entries(value).filter(
-          ([key, val]) => isNode(val)
-        );
+    constructor(value = {}) {
+      super(value);
 
-        const childrenToDetach = self.children.filter((child, key) => {
-          const index = entriesForNodesThatStillExist.findIndex(
-            presentNode => presentNode[1] === child
-          );
+      invariant(
+        isPlainObject(value),
+        'ObjectNode value must be a plain object'
+      );
 
-          if (index === -1) {
-            return false;
-          }
+      intercept(this.children.collection, change => {
+        typeCheck(type[change.name], change.newValue);
+        return change;
+      });
 
-          // just the ones that still exist and have moved to a new key
-          return entriesForNodesThatStillExist[index][0] !== key;
-        });
+      this.setValue(value);
 
-        Object.values(childrenToDetach).forEach(child => detach(child));
+      // the intercept will monitor all changes but not initialization
+      // validate all the keys once after setting them
+      Object.keys(type).forEach(key => {
+        console.log(type[key]);
+        console.log(this.children.get(key));
+        typeCheck(type[key], this.children.get(key));
+      });
+    }
 
-        self.children.replace(value);
-      }
-    }));
+    @action
+    setValue(value) {
+      invariant(isPlainObject(value), 'value must be an object');
+
+      const valuesInType = new ObjectCollection(value).filter(
+        (v, k) => k in type
+      );
+
+      new ObjectCollection(valuesInType).forEach((v, k) => {
+        const currentChild = this.children.get(k);
+
+        if (currentChild && !isNode(v)) {
+          currentChild.setValue(v);
+          return;
+        }
+
+        if (isNode(v)) {
+          this.children.set(k, v);
+          return;
+        }
+
+        const Type = getInstantiableFromType(type[k]);
+        this.children.set(k, new Type(v));
+      });
+    }
+  }
+
+  // For some reason if you just return this directly then everything is fucked
+  // give it a name and return it on a separate line to fix the issue
+  // https://github.com/Microsoft/TypeScript/issues/14607
+  return ObjectNode;
+};

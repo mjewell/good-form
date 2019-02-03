@@ -9,7 +9,8 @@ module.exports = {
       statements: 95
     }
   },
-  collectCoverage: true,
+  // figure out why this breaks line numbers
+  // collectCoverage: true,
   collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}'],
   setupTestFrameworkScriptFile: '<rootDir>test/setup.js'
 };

@@ -11,6 +11,6 @@ traverser = traverser.extendNode(extendNode);
 traverser = traverser.extendLeafNode(extendLeafNode);
 traverser = traverser.extendParentNode(extendParentNode);
 traverser = traverser.extendObjectNode(extendObjectNode);
-traverser = traverser.extendArrayNode(extendArrayNode);
+// traverser = traverser.extendArrayNode(extendArrayNode);
 
 export default traverser;
