@@ -1,6 +1,5 @@
 import { intercept, observable, action } from 'mobx';
 import invariant from 'invariant';
-import typeCheck from '../types/validate';
 
 function validateType(type) {
   invariant(
@@ -19,7 +18,7 @@ export default (Node, type) => {
       super(value);
 
       intercept(this, 'value', change => {
-        typeCheck(type, change.newValue);
+        type(change.newValue);
         return change;
       });
 

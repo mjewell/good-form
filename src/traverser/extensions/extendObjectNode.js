@@ -2,8 +2,6 @@ import invariant from 'invariant';
 import isPlainObject from 'lodash/isPlainObject';
 import { action, intercept, observable } from 'mobx';
 import isNode from '../utils/isNode';
-import typeCheck from '../types/validate';
-import getInstantiableFromType from '../types/getInstantiableFromType';
 import ObjectCollection from '../collections/ObjectCollection';
 import createChildMap from '../Children/createMap';
 
@@ -20,7 +18,7 @@ export default (Node, type) => {
       );
 
       intercept(this.children.collection, change => {
-        typeCheck(type[change.name], change.newValue);
+        type[change.name](change.newValue);
         return change;
       });
 
@@ -29,9 +27,7 @@ export default (Node, type) => {
       // the intercept will monitor all changes but not initialization
       // validate all the keys once after setting them
       Object.keys(type).forEach(key => {
-        console.log(type[key]);
-        console.log(this.children.get(key));
-        typeCheck(type[key], this.children.get(key));
+        type[key](this.children.get(key));
       });
     }
 
@@ -56,8 +52,7 @@ export default (Node, type) => {
           return;
         }
 
-        const Type = getInstantiableFromType(type[k]);
-        this.children.set(k, new Type(v));
+        this.children.set(k, type[k].create(v));
       });
     }
   }

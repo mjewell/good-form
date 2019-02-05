@@ -1,4 +1,5 @@
 import { types } from 'mobx-state-tree';
+import t from 'tcomb';
 import invariant from 'invariant';
 
 function createNode(BaseClass, callbacks, ...args) {
@@ -89,17 +90,23 @@ export default class Traverser {
   }
 
   createLeafNode(type, options) {
-    return createNode(
+    const Node = createNode(
       class LeafNode {},
       [...this.nodeCallbacks, ...this.leafNodeCallbacks],
       type,
       options,
       this.context
     );
+
+    const nodeType = t.irreducible(Node.name, node => node instanceof Node);
+
+    nodeType.create = (...args) => new Node(...args);
+
+    return nodeType;
   }
 
   createObjectNode(type, options) {
-    return createNode(
+    const Node = createNode(
       class ObjectNode {},
       [
         ...this.nodeCallbacks,
@@ -110,10 +117,16 @@ export default class Traverser {
       options,
       this.context
     );
+
+    const nodeType = t.irreducible(Node.name, node => node instanceof Node);
+
+    nodeType.create = (...args) => new Node(...args);
+
+    return nodeType;
   }
 
   createArrayNode(type, options) {
-    return createNode(
+    const Node = createNode(
       class ArrayNode {},
       [
         ...this.nodeCallbacks,
@@ -124,5 +137,11 @@ export default class Traverser {
       options,
       this.context
     );
+
+    const nodeType = t.irreducible(Node.name, node => node instanceof Node);
+
+    nodeType.create = (...args) => new Node(...args);
+
+    return nodeType;
   }
 }
