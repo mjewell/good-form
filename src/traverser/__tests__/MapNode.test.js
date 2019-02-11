@@ -165,7 +165,7 @@ describe('setValue', () => {
     });
   });
 
-  it.skip('updates nodes when a node is moved and replaced', () => {
+  it('updates nodes when a node is moved and replaced', () => {
     const mapNode = MapNode.create({
       a: 'a',
       b: 'b'

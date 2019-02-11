@@ -1,4 +1,4 @@
-import { detach, types } from 'mobx-state-tree';
+import { types } from 'mobx-state-tree';
 
 export default Type =>
   types
@@ -54,7 +54,9 @@ export default Type =>
         self.collection.set(key, value);
       },
       remove(key) {
-        detach(self.get(key));
         return self.collection.delete(key);
+      },
+      replace(collection) {
+        self.collection.replace(collection);
       }
     }));

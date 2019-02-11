@@ -259,7 +259,7 @@ describe('setValue', () => {
         a: 'a'
       })
     ).toThrow(
-      'at path "/value" value `undefined` is not assignable to type: `string`'
+      'at path "/b/value" value `undefined` is not assignable to type: `string`'
     );
   });
 
@@ -314,7 +314,7 @@ describe('setValue', () => {
     });
   });
 
-  it.skip('updates nodes when a node is moved and replaced', () => {
+  it('updates nodes when a node is moved and replaced', () => {
     const MaybeObjectNode = traverser.createObjectNode({
       a: types.maybe(StringNode),
       b: types.maybe(StringNode)

@@ -1,4 +1,4 @@
-import { detach, getPropertyMembers, types } from 'mobx-state-tree';
+import { getPropertyMembers, types } from 'mobx-state-tree';
 
 export default Type =>
   types
@@ -72,8 +72,10 @@ export default Type =>
       },
       remove(key) {
         const child = self.get(key);
-        detach(child);
         self.collection[key] = undefined;
         return child;
+      },
+      replace(collection) {
+        self.collection = collection;
       }
     }));
