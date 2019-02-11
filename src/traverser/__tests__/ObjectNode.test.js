@@ -32,7 +32,7 @@ describe('creation', () => {
 
     it('errors if the value isnt an object', () => {
       expect(() => ObjectNode.create(1)).toThrowError(
-        'ObjectNode value must be a plain object'
+        'value must be a plain object'
       );
     });
 
@@ -95,7 +95,7 @@ describe('creation', () => {
 
     it('errors if the value isnt an object', () => {
       expect(() => ObjectNode.create(1)).toThrowError(
-        'ObjectNode value must be a plain object'
+        'value must be a plain object'
       );
     });
 
@@ -158,7 +158,7 @@ describe('creation', () => {
 
     it('errors if the value isnt an object', () => {
       expect(() => ObjectNode.create(1)).toThrowError(
-        'ObjectNode value must be a plain object'
+        'value must be a plain object'
       );
     });
 

@@ -1,7 +1,7 @@
 import invariant from 'invariant';
 import isPlainObject from 'lodash/isPlainObject';
 import { action, intercept, observable } from 'mobx';
-import isNode from '../utils/isNode';
+import t, { getTypeName } from 'tcomb';
 import ObjectCollection from '../collections/ObjectCollection';
 import createChildMap from '../Children/createMap';
 
@@ -12,47 +12,50 @@ export default (Node, type) => {
     constructor(value = {}) {
       super(value);
 
-      invariant(
-        isPlainObject(value),
-        'ObjectNode value must be a plain object'
-      );
-
+      // need to batch these errors together
       intercept(this.children.collection, change => {
-        type[change.name](change.newValue);
+        const subType = type[change.name];
+        const newNode = subType.create(change.newValue);
+        change.newValue = newNode;
         return change;
       });
 
+      // catch this and add the other errors in
       this.setValue(value);
 
-      // the intercept will monitor all changes but not initialization
-      // validate all the keys once after setting them
-      Object.keys(type).forEach(key => {
-        type[key](this.children.get(key));
-      });
+      // intercept will get all keys that are defined at the start
+      // so check all the values that werent provided at the start
+      const typeErrors = Object.keys(type)
+        .filter(key => !(key in value))
+        .reduce((errors, key) => {
+          const subType = type[key];
+
+          if (subType.is(undefined)) {
+            return errors;
+          }
+
+          return [
+            ...errors,
+            `Invalid value ${t.stringify(undefined)} supplied to ${getTypeName(
+              subType
+            )}`
+          ];
+        }, []);
+
+      t.assert(typeErrors.length === 0, typeErrors.join('\n'));
     }
 
     @action
     setValue(value) {
-      invariant(isPlainObject(value), 'value must be an object');
+      invariant(isPlainObject(value), 'value must be a plain object');
 
+      // we only want to create nodes for when there
       const valuesInType = new ObjectCollection(value).filter(
         (v, k) => k in type
       );
 
       new ObjectCollection(valuesInType).forEach((v, k) => {
-        const currentChild = this.children.get(k);
-
-        if (currentChild && !isNode(v)) {
-          currentChild.setValue(v);
-          return;
-        }
-
-        if (isNode(v)) {
-          this.children.set(k, v);
-          return;
-        }
-
-        this.children.set(k, type[k].create(v));
+        this.children.set(k, v);
       });
     }
   }

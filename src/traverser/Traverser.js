@@ -1,4 +1,3 @@
-import { types } from 'mobx-state-tree';
 import t from 'tcomb';
 import invariant from 'invariant';
 
@@ -89,24 +88,38 @@ export default class Traverser {
     this.context = context;
   }
 
-  createLeafNode(type, options) {
-    const Node = createNode(
-      class LeafNode {},
-      [...this.nodeCallbacks, ...this.leafNodeCallbacks],
-      type,
-      options,
-      this.context
+  createType(BaseClass, callbacks, type, options) {
+    const Node = createNode(BaseClass, callbacks, type, options, this.context);
+
+    const nodeType = t.irreducible(
+      Node.name,
+      nodeOrSnapshot => nodeOrSnapshot instanceof Node
     );
 
-    const nodeType = t.irreducible(Node.name, node => node instanceof Node);
+    nodeType.create = (nodeOrSnapshot, ...args) => {
+      if (nodeOrSnapshot instanceof Node) {
+        return nodeOrSnapshot;
+      }
 
-    nodeType.create = (...args) => new Node(...args);
+      return new Node(nodeOrSnapshot, ...args);
+    };
 
     return nodeType;
   }
 
+  createLeafNode(type, options) {
+    return this.createType(
+      class LeafNode {},
+      [...this.nodeCallbacks, ...this.leafNodeCallbacks],
+      type,
+      options
+    );
+  }
+
   createObjectNode(type, options) {
-    const Node = createNode(
+    // TODO: assert type has the correct shape
+
+    return this.createType(
       class ObjectNode {},
       [
         ...this.nodeCallbacks,
@@ -114,34 +127,20 @@ export default class Traverser {
         ...this.objectNodeCallbacks
       ],
       type,
-      options,
-      this.context
+      options
     );
-
-    const nodeType = t.irreducible(Node.name, node => node instanceof Node);
-
-    nodeType.create = (...args) => new Node(...args);
-
-    return nodeType;
   }
 
   createArrayNode(type, options) {
-    const Node = createNode(
+    return this.createType(
       class ArrayNode {},
       [
         ...this.nodeCallbacks,
         ...this.parentNodeCallbacks,
         ...this.arrayNodeCallbacks
       ],
-      types.array(type),
-      options,
-      this.context
+      type,
+      options
     );
-
-    const nodeType = t.irreducible(Node.name, node => node instanceof Node);
-
-    nodeType.create = (...args) => new Node(...args);
-
-    return nodeType;
   }
 }

@@ -1,20 +1,12 @@
 import './tcombOverrides';
-import t from 'tcomb';
+import maybe from './maybe';
+import String from './String';
+import Number from './Number';
 
-function maybe(...args) {
-  const type = t.maybe(...args);
-
-  const innerType = type.meta.type;
-
-  type.create = (...createArgs) => innerType.create(...createArgs);
-
-  return type;
-}
-
-const { String, Number } = t;
+// intercept should call types.create to create instance from instance or snapshot
 
 export default {
-  String,
   Number,
+  String,
   maybe
 };
