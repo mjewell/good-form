@@ -1,26 +1,11 @@
-import { intercept, observable, action } from 'mobx';
-import invariant from 'invariant';
+import { observable, action } from 'mobx';
 
-function validateType(type) {
-  invariant(
-    typeof type === 'function' && typeof type.is === 'function',
-    'LeafNode type must be a tcomb object'
-  );
-}
-
-export default (Node, type) => {
-  validateType(type);
-
+export default Node => {
   class LeafNode extends Node {
     @observable value;
 
     constructor(value) {
       super(value);
-
-      intercept(this, 'value', change => {
-        type(change.newValue);
-        return change;
-      });
 
       this.setValue(value);
     }

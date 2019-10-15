@@ -1,9 +1,7 @@
 import invariant from 'invariant';
 import isPlainObject from 'lodash/isPlainObject';
-import { action, intercept, observable } from 'mobx';
-import t, { getTypeName } from 'tcomb';
+import { action, observable } from 'mobx';
 import ObjectCollection from '../collections/ObjectCollection';
-import createChildMap from '../Children/createMap';
 
 export default (Node, type) => {
   class ObjectNode extends Node {
@@ -12,37 +10,7 @@ export default (Node, type) => {
     constructor(value = {}) {
       super(value);
 
-      // need to batch these errors together
-      intercept(this.children.collection, change => {
-        const subType = type[change.name];
-        const newNode = subType.create(change.newValue);
-        change.newValue = newNode;
-        return change;
-      });
-
-      // catch this and add the other errors in
       this.setValue(value);
-
-      // intercept will get all keys that are defined at the start
-      // so check all the values that werent provided at the start
-      const typeErrors = Object.keys(type)
-        .filter(key => !(key in value))
-        .reduce((errors, key) => {
-          const subType = type[key];
-
-          if (subType.is(undefined)) {
-            return errors;
-          }
-
-          return [
-            ...errors,
-            `Invalid value ${t.stringify(undefined)} supplied to ${getTypeName(
-              subType
-            )}`
-          ];
-        }, []);
-
-      t.assert(typeErrors.length === 0, typeErrors.join('\n'));
     }
 
     @action
@@ -55,7 +23,13 @@ export default (Node, type) => {
       );
 
       new ObjectCollection(valuesInType).forEach((v, k) => {
-        this.children.set(k, v);
+        const child = this.children.get(k);
+
+        if (child) {
+          child.setValue(v);
+        } else {
+          this.children.set(k, new type[k](v));
+        }
       });
     }
   }

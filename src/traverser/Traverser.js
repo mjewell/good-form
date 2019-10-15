@@ -1,5 +1,6 @@
-import t from 'tcomb';
 import invariant from 'invariant';
+import isPlainObject from 'lodash/isPlainObject';
+import isNodeDefinition from './utils/isNodeDefinition';
 
 function createNode(BaseClass, callbacks, ...args) {
   return callbacks.reduce(
@@ -88,38 +89,27 @@ export default class Traverser {
     this.context = context;
   }
 
-  createType(BaseClass, callbacks, type, options) {
-    const Node = createNode(BaseClass, callbacks, type, options, this.context);
-
-    const nodeType = t.irreducible(
-      Node.name,
-      nodeOrSnapshot => nodeOrSnapshot instanceof Node
-    );
-
-    nodeType.create = (nodeOrSnapshot, ...args) => {
-      if (nodeOrSnapshot instanceof Node) {
-        return nodeOrSnapshot;
-      }
-
-      return new Node(nodeOrSnapshot, ...args);
-    };
-
-    return nodeType;
-  }
-
-  createLeafNode(type, options) {
-    return this.createType(
+  createLeafNode(options) {
+    return createNode(
       class LeafNode {},
       [...this.nodeCallbacks, ...this.leafNodeCallbacks],
-      type,
+      null,
       options
     );
   }
 
   createObjectNode(type, options) {
-    // TODO: assert type has the correct shape
+    const isMapType = isNodeDefinition(type);
+    const isObjectType =
+      isPlainObject(type) &&
+      Object.values(type).every(t => isNodeDefinition(t));
 
-    return this.createType(
+    invariant(
+      isMapType || isObjectType,
+      'type must be a node definition or an object with node definitions as values'
+    );
+
+    return createNode(
       class ObjectNode {},
       [
         ...this.nodeCallbacks,
@@ -132,7 +122,9 @@ export default class Traverser {
   }
 
   createArrayNode(type, options) {
-    return this.createType(
+    invariant(isNodeDefinition(type), 'type must be a node definition');
+
+    return createNode(
       class ArrayNode {},
       [
         ...this.nodeCallbacks,

@@ -1,5 +1,5 @@
-import { types } from 'mobx-state-tree';
 import traverser from '..';
+import { action, observable, computed } from 'mobx';
 
 it('recurses through deep objects', () => {
   const NumberNode = traverser.createLeafNode(types.number);
@@ -25,47 +25,52 @@ it('recurses through deep objects', () => {
   expect(obj.getChild('arr[0].a').value).toBe(1);
 });
 
-it('can be extended', () => {
-  let t = traverser.extendLeafNode(node =>
-    node
-      .props({
-        blurred: false
-      })
-      .actions(self => ({
+it.only('can be extended', () => {
+  let t = traverser.extendLeafNode(
+    Node =>
+      class extends Node {
+        @observable blurred = false;
+
+        @action.bound
         blur() {
-          self.blurred = true;
-        },
-        unblur() {
-          self.blurred = false;
+          this.blurred = true;
         }
-      }))
+
+        @action.bound
+        unblur() {
+          this.blurred = false;
+        }
+      }
   );
 
-  t = t.extendParentNode(node =>
-    node
-      .views(self => ({
+  t = t.extendParentNode(
+    Node =>
+      class extends Node {
+        @computed
         get blurred() {
-          return self.children.some(child => child.blurred);
+          return this.children.some(child => child.blurred);
         }
-      }))
-      .actions(self => ({
+
+        @action.bound
         blur() {
-          self.children.map(child => child.blur());
-        },
-        unblur() {
-          self.children.map(child => child.unblur());
+          this.children.map(child => child.blur());
         }
-      }))
+
+        @action.bound
+        unblur() {
+          this.children.map(child => child.unblur());
+        }
+      }
   );
 
   const FormNode = t.createObjectNode({
     name: t.createObjectNode({
-      first: t.createLeafNode(types.string),
-      last: t.createLeafNode(types.string)
+      first: t.createLeafNode(),
+      last: t.createLeafNode()
     })
   });
 
-  const form = FormNode.create({
+  const form = new FormNode({
     name: {
       first: '',
       last: ''

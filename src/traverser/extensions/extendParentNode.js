@@ -8,23 +8,39 @@ export default Node =>
     get value() {
       return this.children.map(child => child.value);
     }
+
+    getChild(path) {
+      const pathArray = toPath(path);
+
+      const [nextPath, ...remainingPath] = pathArray;
+
+      const child = this.children.get(nextPath);
+
+      invariant(child, `No child found in path at '${nextPath}'`);
+
+      if (remainingPath.length === 0) {
+        return child;
+      }
+
+      return child.getChild(remainingPath);
+    }
   };
 // .views(self => ({
-//   getChild(path) {
-//     const pathArray = toPath(path);
+// getChild(path) {
+//   const pathArray = toPath(path);
 
-//     const [nextPath, ...remainingPath] = pathArray;
+//   const [nextPath, ...remainingPath] = pathArray;
 
-//     const child = self.children.get(nextPath);
+//   const child = self.children.get(nextPath);
 
-//     invariant(child, `No child found in path at '${nextPath}'`);
+//   invariant(child, `No child found in path at '${nextPath}'`);
 
-//     if (remainingPath.length === 0) {
-//       return child;
-//     }
+//   if (remainingPath.length === 0) {
+//     return child;
+//   }
 
-//     return child.getChild(remainingPath);
-//   },
+//   return child.getChild(remainingPath);
+// },
 //   get pathLookup() {
 //     const map = {};
 //     self.children.forEach((value, key) => {
