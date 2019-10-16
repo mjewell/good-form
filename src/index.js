@@ -1,3 +1,4 @@
-import traverser from './traverser';
+import { add } from './calculator';
+import { add as typedAdd } from './typedCalculator';
 
-export default traverser;
+export { add, typedAdd };

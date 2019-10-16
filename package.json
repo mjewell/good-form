@@ -1,53 +1,43 @@
 {
   "name": "good-form",
-  "version": "0.0.6",
-  "description": "",
-  "main": "dist/lib/index.js",
-  "scripts": {
-    "clean": "rimraf dist",
-    "build": "run-s clean && tsc -p tsconfig.json",
-    "lint": "run-s -c lint:*",
-    "lint:js": "eslint src",
-    "lint:ts": "tslint --project .",
-    "test": "jest --maxWorkers ${JEST_MAX_WORKERS:-0}"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mjewell/good-form.git"
-  },
-  "author": "",
+  "version": "0.6.0",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mjewell/good-form/issues"
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "yarn clean:build && yarn build:types && yarn build:js",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "babel src --out-dir lib --extensions \".js,.jsx,.ts,.tsx\" --config-file ./.prod.babelrc",
+    "bundle": "webpack",
+    "clean:build": "rimraf lib",
+    "clean:bundle": "rimraf dist",
+    "lint": "eslint src",
+    "start": "run-p \"build:types --watch\" \"build:js --watch\"",
+    "test": "jest --maxWorkers ${JEST_MAX_WORKERS:-0}",
+    "type-check": "tsc --noEmit"
   },
-  "homepage": "https://github.com/mjewell/good-form#readme",
   "devDependencies": {
-    "@types/jest": "^23.3.5",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.7.0",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.4.0",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/plugin-proposal-numeric-separator": "^7.2.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.4.0",
+    "@babel/preset-env": "^7.4.1",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/jest": "^24.0.6",
+    "@typescript-eslint/eslint-plugin": "^1.4.0",
+    "@typescript-eslint/parser": "^1.4.0",
+    "babel-loader": "^8.0.5",
+    "eslint": "^5.14.1",
     "eslint-config-airbnb": "^17.1.0",
-    "eslint-config-prettier": "^3.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jsx-a11y": "^6.1.2",
-    "eslint-plugin-react": "^7.11.1",
-    "jest": "^23.6.0",
-    "mobx": "^5.5.2",
-    "mobx-state-tree": "^3.7.1",
-    "npm-run-all": "^4.1.3",
-    "react": "^16.5.2",
-    "rimraf": "^2.6.2",
-    "ts-jest": "^23.10.4",
-    "tslint": "^5.11.0",
-    "tslint-config-prettier": "^1.15.0",
-    "typescript": "^3.1.3"
-  },
-  "dependencies": {
-    "invariant": "^2.2.4",
-    "lodash": "^4.17.11",
-    "uniqid": "^5.0.3"
-  },
-  "peerDependencies": {
-    "mobx": ">4.0.0",
-    "mobx-state-tree": ">3.0.0"
+    "eslint-config-prettier": "^4.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.12.4",
+    "fork-ts-checker-webpack-plugin": "^0.5.2",
+    "jest": "^24.1.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^3.3.3",
+    "webpack": "^4.29.5",
+    "webpack-cli": "^3.2.3"
   }
 }
