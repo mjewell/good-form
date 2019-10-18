@@ -1,4 +1,4 @@
-export interface Form<T> {
-  value: T;
-  setValue(value: T): void;
+export interface Form {
+  value: unknown;
+  setValue(value: unknown): void;
 }

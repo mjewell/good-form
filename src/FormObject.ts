@@ -1,39 +1,55 @@
 import { Form } from "./Form";
+import { map, forEach } from "./collections/object";
 
-export type FormObjectFields<Shape> = {
-  [K in keyof Shape]: Shape[K];
+export interface ShapeType {
+  [key: string]: { new (value: unknown): Form };
+}
+
+export type FormObjectFields<Shape extends ShapeType> = {
+  [K in keyof Shape]?: InstanceType<Shape[K]>;
 };
 
-export type FormObjectValues<Shape> = {
-  [K in keyof Shape]: Shape[K] extends {
-    new (value: infer T): Form<infer T>;
-  }
-    ? T
-    : never;
+export type FormObjectValues<Shape extends ShapeType> = {
+  [K in keyof Shape]?: InstanceType<Shape[K]>["value"];
 };
 
-export class FormObject<Shape> {
-  public fields: FormObjectFields<Shape>;
+export class FormObject<Shape extends ShapeType> {
+  private shape: Shape;
+
+  public fields!: FormObjectFields<Shape>;
 
   public constructor(shape: Shape, value: FormObjectValues<Shape>) {
-    this.fields = Object.entries(shape).reduce<FormObjectFields<Shape>>(
-      (hash, [key, Type]): any => ({
-        ...hash,
-        [key]: new Type((value as any)[key])
-      }),
-      {} as any
-    );
+    this.shape = shape;
+    this.fields = {};
+    this.setValue(value);
   }
 
   public get value(): FormObjectValues<Shape> {
-    return Object.entries(this.fields).reduce<any>(
-      (hash, [key, field]) => ({
-        ...hash,
-        [key]: field.value
-      }),
-      {}
-    );
+    return map(
+      this.fields,
+      (field): unknown => (field as Form).value
+    ) as FormObjectValues<Shape>;
   }
 
-  public setValue(value: FormObjectValues<Shape>): void {}
+  public setValue(value: FormObjectValues<Shape>): void {
+    forEach(this.shape, (Type, key): void => {
+      if (key in value) {
+        const field = this.fields[key];
+        const newValue = value[key];
+
+        if (field) {
+          field.setValue(newValue);
+        } else {
+          const newField = new Type(newValue);
+          this.fields[key] = newField as InstanceType<typeof Type>;
+        }
+      } else {
+        const field = this.fields[key];
+
+        if (field) {
+          delete this.fields[key];
+        }
+      }
+    });
+  }
 }

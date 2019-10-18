@@ -19,6 +19,16 @@ describe("complex examples", (): void => {
       name: "a",
       age: 1
     });
+
+    form.setValue({
+      name: "b",
+      age: 2
+    });
+
+    expect(form.value).toEqual({
+      name: "b",
+      age: 2
+    });
   });
 
   it("handles nested objects", (): void => {
@@ -40,6 +50,20 @@ describe("complex examples", (): void => {
       user: {
         name: "a",
         age: 1
+      }
+    });
+
+    form.setValue({
+      user: {
+        name: "b",
+        age: 2
+      }
+    });
+
+    expect(form.value).toEqual({
+      user: {
+        name: "b",
+        age: 2
       }
     });
   });
