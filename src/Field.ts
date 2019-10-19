@@ -1,6 +1,6 @@
-import { Form } from "./Form";
+import { FieldType } from "./interfaces";
 
-export class Field<T> implements Form {
+export class Field<T> implements FieldType {
   public value: T;
 
   public constructor(value: T) {

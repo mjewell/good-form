@@ -1,8 +1,8 @@
-import { Form } from "./Form";
+import { FieldType } from "./interfaces";
 import { map, forEach } from "./collections/object";
 
 export interface ShapeType {
-  [key: string]: { new (value: unknown): Form };
+  [key: string]: { new (value: unknown): FieldType };
 }
 
 export type FormObjectFields<Shape extends ShapeType> = {
@@ -27,7 +27,7 @@ export class FormObject<Shape extends ShapeType> {
   public get value(): FormObjectValues<Shape> {
     return map(
       this.fields,
-      (field): unknown => (field as Form).value
+      (field): unknown => (field as FieldType).value
     ) as FormObjectValues<Shape>;
   }
 
