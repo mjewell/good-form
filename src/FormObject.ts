@@ -24,14 +24,19 @@ export class FormObject<
   F extends FieldType = FieldType
 > implements FieldType {
   public static of<
-    T extends typeof FormObject,
+    T extends {
+      new (shape: Shape, value: FormObjectValues<Shape, F>): FormObject<
+        Shape,
+        F
+      >;
+    },
     Shape extends ShapeType<F>,
     F extends FieldType = FieldType
   >(
     this: T,
     shape: Shape
   ): {
-    new (value: FormObjectValues<Shape, F>): FormObject<Shape> &
+    new (value: FormObjectValues<Shape, F>): FormObject<Shape, F> &
       InstanceType<T>;
   } {
     const SuperClass = this as new (...args: any[]) => FormObject<Shape, F>;
@@ -40,7 +45,7 @@ export class FormObject<
         super(shape, value);
       }
     } as {
-      new (value: FormObjectValues<Shape, F>): FormObject<Shape> &
+      new (value: FormObjectValues<Shape, F>): FormObject<Shape, F> &
         InstanceType<T>;
     };
   }
@@ -49,20 +54,20 @@ export class FormObject<
 
   public fields: FormObjectFields<Shape>;
 
-  public constructor(shape: Shape, value: FormObjectValues<Shape>) {
+  public constructor(shape: Shape, value: FormObjectValues<Shape, F>) {
     this.shape = shape;
-    this.fields = ({} as any) as FormObjectFields<Shape>;
+    this.fields = ({} as any) as FormObjectFields<Shape, F>;
     this.setValue(value);
   }
 
-  public get value(): FormObjectValues<Shape> {
+  public get value(): FormObjectValues<Shape, F> {
     return map(
       this.fields,
       (field): unknown => (field as FieldType).value
-    ) as FormObjectValues<Shape>;
+    ) as FormObjectValues<Shape, F>;
   }
 
-  public setValue(value: FormObjectValues<Shape>): void {
+  public setValue(value: FormObjectValues<Shape, F>): void {
     forEach(this.shape, (Type, key): void => {
       if (key in value) {
         const field = this.fields[key];

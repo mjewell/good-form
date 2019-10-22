@@ -1,8 +1,43 @@
+import { FieldType } from "../interfaces";
 import { Field } from "../Field";
 import { FormObject, FormObjectValues, ShapeType } from "../FormObject";
 
 class StringField extends Field<string> {}
 class NumberField extends Field<number> {}
+
+it("can be extended", (): void => {
+  type MyFieldType = FieldType & { blurred: boolean };
+
+  class MyField<T> extends Field<T> {
+    public blurred: boolean = true;
+  }
+
+  class MyStringField extends MyField<string> {}
+  class MyNumberField extends MyField<number> {}
+
+  class MyFormObject<Shape extends ShapeType<MyFieldType>> extends FormObject<
+    Shape,
+    MyFieldType
+  > {
+    public get blurred(): boolean {
+      return Object.keys(this.fields).some(
+        (f): boolean => this.fields[f].blurred
+      );
+    }
+  }
+
+  const F = MyFormObject.of({
+    a: MyStringField,
+    b: MyNumberField
+  });
+
+  const f = new F({
+    a: "a",
+    b: 1
+  });
+
+  expect(f.blurred).toBe(true);
+});
 
 it("does stuff", (): void => {
   class X<T extends ShapeType> extends FormObject<T> {
