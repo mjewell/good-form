@@ -1,6 +1,6 @@
 import { FieldType } from "../interfaces";
 import { Field } from "../Field";
-import { FormObject, FormObjectValues, ShapeType } from "../FormObject";
+import { FieldObject, FieldObjectValues, ShapeType } from "../FieldObject";
 
 class StringField extends Field<string> {}
 class NumberField extends Field<number> {}
@@ -15,7 +15,7 @@ it("can be extended", (): void => {
   class MyStringField extends MyField<string> {}
   class MyNumberField extends MyField<number> {}
 
-  class MyFormObject<Shape extends ShapeType<MyFieldType>> extends FormObject<
+  class MyFieldObject<Shape extends ShapeType<MyFieldType>> extends FieldObject<
     Shape,
     MyFieldType
   > {
@@ -26,7 +26,7 @@ it("can be extended", (): void => {
     }
   }
 
-  const F = MyFormObject.of({
+  const F = MyFieldObject.of({
     a: MyStringField,
     b: MyNumberField
   });
@@ -40,14 +40,14 @@ it("can be extended", (): void => {
 });
 
 it("does stuff", (): void => {
-  class X<T extends ShapeType> extends FormObject<T> {
-    public get x(): FormObjectValues<T> {
+  class X<T extends ShapeType> extends FieldObject<T> {
+    public get x(): FieldObjectValues<T> {
       return this.value;
     }
   }
 
   class Y<T extends ShapeType> extends X<T> {
-    public get y(): FormObjectValues<T> {
+    public get y(): FieldObjectValues<T> {
       return this.value;
     }
   }
@@ -67,7 +67,7 @@ it("does stuff", (): void => {
 
 describe("complex examples", (): void => {
   it("handles objects", (): void => {
-    const Form = FormObject.of({
+    const Form = FieldObject.of({
       name: StringField,
       age: NumberField
     });
@@ -94,7 +94,7 @@ describe("complex examples", (): void => {
   });
 
   it("handles nested objects", (): void => {
-    const UserForm = FormObject.of({
+    const UserForm = FieldObject.of({
       name: StringField,
       age: NumberField
     });
@@ -104,7 +104,7 @@ describe("complex examples", (): void => {
       age: "1"
     });
 
-    const Form = FormObject.of({
+    const Form = FieldObject.of({
       user: UserForm
     });
 

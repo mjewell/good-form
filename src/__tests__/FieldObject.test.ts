@@ -1,9 +1,9 @@
-import { FormObject } from "../FormObject";
+import { FieldObject } from "../FieldObject";
 import { Field } from "../Field";
 
 describe("value", (): void => {
   it("is set in the constructor", (): void => {
-    const form = new FormObject(
+    const form = new FieldObject(
       {
         firstName: Field,
         lastName: Field
