@@ -1,3 +1,4 @@
+import { action, computed, observable } from "mobx";
 import { FieldType } from "./interfaces";
 import { map, forEach } from "./collections/object";
 
@@ -52,7 +53,7 @@ export class FormObject<
 
   private shape: Shape;
 
-  public fields: FormObjectFields<Shape>;
+  @observable public fields: FormObjectFields<Shape>;
 
   public constructor(shape: Shape, value: FormObjectValues<Shape, F>) {
     this.shape = shape;
@@ -60,6 +61,7 @@ export class FormObject<
     this.setValue(value);
   }
 
+  @computed
   public get value(): FormObjectValues<Shape, F> {
     return map(
       this.fields,
@@ -67,6 +69,7 @@ export class FormObject<
     ) as FormObjectValues<Shape, F>;
   }
 
+  @action
   public setValue(value: FormObjectValues<Shape, F>): void {
     forEach(this.shape, (Type, key): void => {
       if (key in value) {
