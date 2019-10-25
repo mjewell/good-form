@@ -1,6 +1,6 @@
 import { action, computed, observable } from "mobx";
 import { FieldType } from "./interfaces";
-import { map, forEach } from "./collections/object";
+import { some, map, forEach } from "./collections/object";
 
 export interface ShapeType<F extends FieldType = FieldType> {
   [key: string]: { new (value: unknown): F };
@@ -90,5 +90,20 @@ export class FieldObject<
         }
       }
     });
+  }
+
+  @computed
+  public get blurred(): boolean {
+    return some(this.fields, (field): boolean => field.blurred);
+  }
+
+  @action
+  public blur(): void {
+    forEach(this.fields, (field): void => field.blur());
+  }
+
+  @action
+  public unblur(): void {
+    forEach(this.fields, (field): void => field.unblur());
   }
 }

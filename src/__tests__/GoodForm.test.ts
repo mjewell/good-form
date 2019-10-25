@@ -6,10 +6,10 @@ class StringField extends Field<string> {}
 class NumberField extends Field<number> {}
 
 it("can be extended", (): void => {
-  type MyFieldType = FieldType & { blurred: boolean };
+  type MyFieldType = FieldType & { hasRandomProperty: boolean };
 
   class MyField<T> extends Field<T> {
-    public blurred: boolean = true;
+    public hasRandomProperty: boolean = true;
   }
 
   class MyStringField extends MyField<string> {}
@@ -19,9 +19,9 @@ it("can be extended", (): void => {
     Shape,
     MyFieldType
   > {
-    public get blurred(): boolean {
+    public get hasRandomProperty(): boolean {
       return Object.keys(this.fields).some(
-        (f): boolean => this.fields[f].blurred
+        (f): boolean => this.fields[f].hasRandomProperty
       );
     }
   }
@@ -36,7 +36,9 @@ it("can be extended", (): void => {
     b: 1
   });
 
-  expect(f.blurred).toBe(true);
+  expect(f.fields.a.hasRandomProperty).toBe(true);
+
+  expect(f.hasRandomProperty).toBe(true); // fix this
 });
 
 it("does stuff", (): void => {

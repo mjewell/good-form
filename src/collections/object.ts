@@ -38,3 +38,16 @@ export function filter<Shape extends object>(
 
   return result;
 }
+
+export function some<Shape extends object>(
+  obj: Shape,
+  callback: <K extends keyof Shape>(
+    value: Shape[K],
+    key: K,
+    obj: Shape
+  ) => boolean
+): boolean {
+  return Object.entries(obj).some(([key, value]): boolean =>
+    callback(value, key as keyof Shape, obj)
+  );
+}
