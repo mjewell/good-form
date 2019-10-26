@@ -13,7 +13,9 @@
     "lint": "eslint src",
     "start": "run-p \"build:types --watch\" \"build:js --watch\"",
     "test": "jest --maxWorkers ${JEST_MAX_WORKERS:-0}",
-    "type-check": "tsc --noEmit"
+    "type-check:internal": "tsc --noEmit",
+    "type-check:external": "dtslint --localTs node_modules/typescript/lib --expectOnly types",
+    "type-check": "yarn type-check:internal && yarn type-check:external"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -28,6 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^1.4.0",
     "@typescript-eslint/parser": "^1.4.0",
     "babel-loader": "^8.0.5",
+    "dtslint": "^0.9.9",
     "eslint": "^5.14.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^4.0.0",
