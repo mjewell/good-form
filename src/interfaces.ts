@@ -1,6 +1,6 @@
 export interface FieldType {
-  value: unknown;
-  setValue(value: unknown): void;
+  value: any;
+  setValue(value: any): void;
   blurred: boolean;
   blur(): void;
   unblur(): void;

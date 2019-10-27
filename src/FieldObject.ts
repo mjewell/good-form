@@ -3,7 +3,7 @@ import { FieldType } from "./interfaces";
 import { some, map, forEach } from "./collections/object";
 
 export interface ShapeType<F extends FieldType = FieldType> {
-  [key: string]: { new (value: unknown): F };
+  [key: string]: { new (value: any): F };
 }
 
 export type FieldObjectFields<
@@ -65,7 +65,7 @@ export class FieldObject<
   public get value(): FieldObjectValues<Shape, F> {
     return map(
       this.fields,
-      (field): unknown => (field as FieldType).value
+      (field): any => (field as FieldType).value
     ) as FieldObjectValues<Shape, F>;
   }
 

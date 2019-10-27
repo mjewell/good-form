@@ -5,11 +5,12 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "yarn clean:build && yarn build:types && yarn build:js",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly -p tsconfig.build.json",
     "build:js": "babel src --out-dir lib --extensions \".js,.jsx,.ts,.tsx\" --config-file ./.prod.babelrc",
     "bundle": "webpack",
     "clean:build": "rimraf lib",
     "clean:bundle": "rimraf dist",
+    "clean": "yarn clean:build && yarn clean:bundle",
     "lint": "eslint src",
     "start": "run-p \"build:types --watch\" \"build:js --watch\"",
     "test": "jest --maxWorkers ${JEST_MAX_WORKERS:-0}",
