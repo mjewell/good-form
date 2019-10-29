@@ -1,6 +1,6 @@
 import { FieldType } from "../interfaces";
 import { Field } from "../Field";
-import { FieldObject, FieldObjectValues, ShapeType } from "../FieldObject";
+import { FieldObject, ShapeType } from "../FieldObject";
 
 class StringField extends Field<string> {}
 class NumberField extends Field<number> {}
@@ -38,33 +38,7 @@ it("can be extended", (): void => {
 
   expect(f.fields.a.hasRandomProperty).toBe(true);
 
-  expect(f.hasRandomProperty).toBe(true); // fix this
-});
-
-it("does stuff", (): void => {
-  class X<T extends ShapeType> extends FieldObject<T> {
-    public get x(): FieldObjectValues<T> {
-      return this.value;
-    }
-  }
-
-  class Y<T extends ShapeType> extends X<T> {
-    public get y(): FieldObjectValues<T> {
-      return this.value;
-    }
-  }
-
-  const F = Y.of({
-    first: StringField
-  });
-
-  const f = new F({
-    first: "1"
-  });
-
-  console.log(f);
-  console.log(f.x);
-  console.log(f.y);
+  expect(f.hasRandomProperty).toBe(true);
 });
 
 describe("complex examples", (): void => {
@@ -96,24 +70,17 @@ describe("complex examples", (): void => {
   });
 
   it("handles nested objects", (): void => {
-    const UserForm = FieldObject.of({
-      name: StringField,
-      age: NumberField
-    });
-
-    const userForm = new UserForm({
-      name: "",
-      age: "1"
-    });
-
     const Form = FieldObject.of({
-      user: UserForm
+      user: FieldObject.of({
+        name: StringField,
+        age: NumberField
+      })
     });
 
     const form = new Form({
       user: {
         name: "a",
-        age: "1" // this should fail
+        age: 1
       }
     });
 

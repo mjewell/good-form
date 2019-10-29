@@ -38,7 +38,7 @@ export class FieldObject<
     shape: Shape
   ): {
     new (value: FieldObjectValues<Shape, F>): FieldObject<Shape, F> &
-      InstanceType<T>;
+      Omit<InstanceType<T>, keyof FieldObject<Shape, F>>;
   } {
     const SuperClass = this as new (...args: any[]) => FieldObject<Shape, F>;
     return class DefinedFieldObject extends SuperClass {
@@ -47,7 +47,7 @@ export class FieldObject<
       }
     } as {
       new (value: FieldObjectValues<Shape, F>): FieldObject<Shape, F> &
-        InstanceType<T>;
+        Omit<InstanceType<T>, keyof FieldObject<Shape, F>>;
     };
   }
 
@@ -63,10 +63,10 @@ export class FieldObject<
 
   @computed
   public get value(): FieldObjectValues<Shape, F> {
-    return map(
-      this.fields,
-      (field): any => (field as FieldType).value
-    ) as FieldObjectValues<Shape, F>;
+    return map(this.fields, (field): F => field.value) as FieldObjectValues<
+      Shape,
+      F
+    >;
   }
 
   @action

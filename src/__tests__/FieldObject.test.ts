@@ -29,6 +29,39 @@ describe("value", (): void => {
 });
 
 describe("setValue", (): void => {
+  it("sets the value of each field", (): void => {
+    const form = new NameForm({
+      firstName: "a",
+      lastName: "b"
+    });
+
+    form.setValue({
+      firstName: "c",
+      lastName: "d"
+    });
+
+    expect(form.value).toEqual({
+      firstName: "c",
+      lastName: "d"
+    });
+  });
+
+  it("sets the value of each field", (): void => {
+    const form = new NameForm({
+      firstName: "a",
+      lastName: "b"
+    });
+
+    form.setValue({
+      firstName: "c",
+      lastName: "d"
+    });
+
+    expect(form.value).toEqual({
+      firstName: "c",
+      lastName: "d"
+    });
+  });
 });
 
 describe("blur", (): void => {
